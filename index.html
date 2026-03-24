@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decálogo Ético Interactivo - Jose</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #020617;
+            color: #f1f5f9;
+            overflow-x: hidden;
+        }
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .glass-card:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            background: rgba(30, 41, 59, 0.8);
+            transform: translateY(-4px);
+        }
+        .glass-card.committed {
+            border-color: #10b981;
+            background: rgba(6, 78, 59, 0.3);
+        }
+        .glass-card.committed .check-icon {
+            color: #10b981;
+            opacity: 1;
+            transform: scale(1);
+        }
+        .check-icon {
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.3s ease;
+        }
+        .progress-bar-fill {
+            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .float-anim {
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Barra de Progreso Fija -->
+    <div class="fixed top-0 left-0 w-full z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 p-4">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-sky-500/20 rounded-lg">
+                    <i data-lucide="shield-check" class="text-sky-400 w-5 h-5"></i>
+                </div>
+                <div>
+                    <h2 class="text-sm font-bold text-slate-200">Integridad Profesional</h2>
+                    <p class="text-xs text-slate-500">Compromisos: <span id="count">0</span> de 10</p>
+                </div>
+            </div>
+            <div class="flex-1 w-full max-w-md h-3 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+                <div id="progress" class="progress-bar-fill h-full bg-gradient-to-r from-sky-500 to-emerald-500 w-0"></div>
+            </div>
+            <button onclick="window.print()" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-md transition-colors border border-slate-700">
+                Exportar PDF
+            </button>
+        </div>
+    </div>
+
+    <div class="pt-32 pb-20 px-4 md:px-8 flex flex-col items-center">
+        <!-- Header -->
+        <header class="max-w-4xl w-full text-center mb-16 opacity-0 translate-y-4 transition-all duration-700 ease-out" id="header">
+            <span class="px-3 py-1 bg-sky-500/10 text-sky-400 text-xs font-bold rounded-full border border-sky-500/20 mb-4 inline-block">CÓDIGO DE HONOR 2024</span>
+            <h1 class="text-5xl md:text-7xl font-black tracking-tighter mb-6">
+                DECÁLOGO <span class="bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-400 bg-clip-text text-transparent">ÉTICO</span>
+            </h1>
+            <p class="text-slate-400 text-lg md:text-xl font-light max-w-2xl mx-auto">
+                Principios fundamentales para la Ingeniería de Calidad y la Arquitectura de Datos de alto impacto.
+            </p>
+        </header>
+
+        <!-- Main Grid -->
+        <div class="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="grid">
+            
+            <!-- ETICA PERSONAL -->
+            <div class="space-y-4">
+                <div class="flex items-center gap-2 text-sky-400 px-2 py-1">
+                    <i data-lucide="user-check" class="w-5 h-5"></i>
+                    <span class="text-xs font-black tracking-widest uppercase">Núcleo Personal</span>
+                </div>
+                
+                <div class="glass-card p-6 rounded-3xl" onclick="toggleCommit(this)">
+                    <div class="flex justify-between items-start mb-4">
+                        <i data-lucide="shield" class="text-sky-400 w-8 h-8"></i>
+                        <i data-lucide="check-circle" class="check-icon w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Integridad</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">Actuar con rectitud absoluta incluso sin supervisión, manteniendo coherencia total entre valores y acciones.</p>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl" onclick="toggleCommit(this)">
+                    <div class="flex justify-between items-start mb-4">
+                        <i data-lucide="trending-up" class="text-sky-400 w-8 h-8"></i>
+                        <i data-lucide="check-circle" class="check-icon w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Autodisciplina</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">Compromiso con el aprendizaje continuo para ofrecer siempre soluciones técnicas de máxima calidad.</p>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl" onclick="toggleCommit(this)">
+                    <div class="flex justify-between items-start mb-4">
+                        <i data-lucide="heart" class="text-sky-400 w-8 h-8"></i>
+                        <i data-lucide="check-circle" class="check-icon w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Respeto Humano</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">Valorar la dignidad intrínseca de cada individuo, promoviendo la diversidad y el trato equitativo.</p>
+                </div>
+            </div>
+
+            <!-- ETICA SOCIAL -->
+            <div class="space-y-4">
+                <div class="flex items-center gap-2 text-indigo-400 px-2 py-1">
+                    <i data-lucide="globe" class="w-5 h-5"></i>
+                    <span class="text-xs font-black tracking-widest uppercase">Impacto Social</span>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl" onclick="toggleCommit(this)">
+                    <div class="flex justify-between items-start mb-4">
+                        <i data-lucide="users" class="text-indigo-400 w-8 h-8"></i>
+                        <i data-lucide="check-circle" class="check-icon w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Empatía Activa</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">Comprender las realidades del entorno para colaborar proactivamente en soluciones colectivas.</p>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl" onclick="toggleCommit(this)">
+                    <div class="flex justify-between items-start mb-4">
+                        <i data-lucide="award" class="text-indigo-400 w-8 h-8"></i>
+                        <i data-lucide="check-circle" class="check-icon w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Bien Común</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">Utilizar la información de manera ética para generar impactos positivos en la comunidad digital.</p>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl" onclick="toggleCommit(this)">
+                    <div class="flex justify-between items-start mb-4">
+                        <i data-lucide="leaf" class="text-indigo-400 w-8 h-8"></i>
+                        <i data-lucide="check-circle" class="check-icon w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Sostenibilidad</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">Evaluar el impacto ecológico y social de cada arquitectura de datos diseñada para el futuro.</p>
+                </div>
+            </div>
+
+            <!-- ETICA PROFESIONAL -->
+            <div class="space-y-4">
+                <div class="flex items-center gap-2 text-emerald-400 px-2 py-1">
+                    <i data-lucide="terminal" class="w-5 h-5"></i>
+                    <span class="text-xs font-black tracking-widest uppercase">QA & Data Engineering</span>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl" onclick="toggleCommit(this)">
+                    <div class="flex justify-between items-start mb-4">
+                        <i data-lucide="search" class="text-emerald-400 w-8 h-8"></i>
+                        <i data-lucide="check-circle" class="check-icon w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Verdad Técnica</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">Reportar bugs y vulnerabilidades con objetividad, priorizando la estabilidad del sistema sobre plazos.</p>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl" onclick="toggleCommit(this)">
+                    <div class="flex justify-between items-start mb-4">
+                        <i data-lucide="lock" class="text-emerald-400 w-8 h-8"></i>
+                        <i data-lucide="check-circle" class="check-icon w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Privacidad Total</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">Custodiar la integridad de las bases de datos; la privacidad es un derecho, no una opción.</p>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl" onclick="toggleCommit(this)">
+                    <div class="flex justify-between items-start mb-4">
+                        <i data-lucide="box" class="text-emerald-400 w-8 h-8"></i>
+                        <i data-lucide="check-circle" class="check-icon w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Rigor y Calidad</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">Buscar la robustez en cada estructura; un sistema excelente es el que no falla bajo presión.</p>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl" onclick="toggleCommit(this)">
+                    <div class="flex justify-between items-start mb-4">
+                        <i data-lucide="zap" class="text-emerald-400 w-8 h-8"></i>
+                        <i data-lucide="check-circle" class="check-icon w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Liderazgo Ético</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">Como QA Lead, guiar al equipo mediante el ejemplo, la mentoría y la transparencia absoluta.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Message -->
+        <div id="success-msg" class="fixed bottom-10 bg-emerald-500 text-white px-8 py-4 rounded-full font-bold shadow-2xl opacity-0 translate-y-20 transition-all duration-500 flex items-center gap-3">
+            <i data-lucide="party-popper"></i>
+            ¡Decálogo Completado: Compromiso Ético Activado!
+        </div>
+    </div>
+
+    <script>
+        // Data Particles Background
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function initParticles() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = [];
+            for(let i = 0; i < 80; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2 + 1,
+                    speed: Math.random() * 0.5 + 0.2,
+                    opacity: Math.random() * 0.5 + 0.1
+                });
+            }
+        }
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#38bdf8';
+            particles.forEach(p => {
+                ctx.globalAlpha = p.opacity;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                p.y -= p.speed;
+                if(p.y < -10) p.y = canvas.height + 10;
+            });
+            requestAnimationFrame(drawParticles);
+        }
+
+        // Interactivity
+        let committedCount = 0;
+        const total = 10;
+
+        function toggleCommit(card) {
+            if (!card.classList.contains('committed')) {
+                card.classList.add('committed');
+                committedCount++;
+                updateProgress();
+            } else {
+                card.classList.remove('committed');
+                committedCount--;
+                updateProgress();
+            }
+        }
+
+        function updateProgress() {
+            const progress = document.getElementById('progress');
+            const countLabel = document.getElementById('count');
+            const successMsg = document.getElementById('success-msg');
+            
+            const percent = (committedCount / total) * 100;
+            progress.style.width = percent + '%';
+            countLabel.innerText = committedCount;
+
+            if (committedCount === total) {
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#38bdf8', '#10b981', '#6366f1']
+                });
+                successMsg.classList.remove('opacity-0', 'translate-y-20');
+            } else {
+                successMsg.classList.add('opacity-0', 'translate-y-20');
+            }
+        }
+
+        // Init
+        window.onload = () => {
+            lucide.createIcons();
+            initParticles();
+            drawParticles();
+            
+            // Entrance animation
+            setTimeout(() => {
+                document.getElementById('header').classList.remove('opacity-0', 'translate-y-4');
+            }, 100);
+        };
+
+        window.onresize = initParticles;
+    </script>
+</body>
+</html>
